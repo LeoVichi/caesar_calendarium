@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="la">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendarium Romanum & Converter</title>
+  <style>
+    body { font-family: "Times New Roman", serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
+    h1 { font-size: 2em; margin-bottom: 0.5em; }
+    #data { font-size: 1.2em; font-weight: bold; margin-bottom: 1em; }
+    .converter { background: #fff; padding: 15px; margin: 10px auto; border-radius: 8px; max-width: 400px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .converter h2 { font-size: 1.2em; margin-bottom: 0.5em; }
+    .converter label { display: block; margin: 8px 0 4px; text-align: left; }
+    .converter input, .converter select, .converter button { width: 100%; padding: 6px; margin-bottom: 8px; }
+    .result { font-weight: bold; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Calendarium Romanum</h1>
+  <p id="data"></p>
+
+  <div class="converter">
+    <h2>Convertere Calendarium Gregorianum → Calendarium Romanum</h2>
+    <label for="gregDateInput">Dies Calendarii Gregoriani:</label>
+    <input type="date" id="gregDateInput">
+    <label for="gregEraSelect">Aetas:</label>
+    <select id="gregEraSelect">
+      <option value="AD" selected>Post Chr.</option>
+      <option value="BC">Ante Chr.</option>
+    </select>
+    <button id="convertToRomanBtn">Convertere in Calendarium Romanum</button>
+    <p id="resultRomanConversion" class="result"></p>
+  </div>
+
+  <div class="converter">
+    <h2>Convertere Calendarium Romanum → Calendarium Gregorianum</h2>
+    <label for="romanSelect">Genus:</label>
+    <select id="romanSelect">
+      <option value="18_kal">a.d. XVIII Kal.</option>
+      <option value="17_kal">a.d. XVII Kal.</option>
+      <option value="16_kal">a.d. XVI Kal.</option>
+      <option value="15_kal">a.d. XV Kal.</option>
+      <option value="14_kal">a.d. XIV Kal.</option>
+      <option value="13_kal">a.d. XIII Kal.</option>
+      <option value="12_kal">a.d. XII Kal.</option>
+      <option value="11_kal">a.d. XI Kal.</option>
+      <option value="10_kal">a.d. X Kal.</option>
+      <option value="9_kal">a.d. IX Kal.</option>
+      <option value="8_kal">a.d. VIII Kal.</option>
+      <option value="7_kal">a.d. VII Kal.</option>
+      <option value="6_kal">a.d. VI Kal.</option>
+      <option value="6_kal_bis">a.d. bis VI Kal.</option>
+      <option value="5_kal">a.d. V Kal.</option>
+      <option value="4_kal">a.d. IV Kal.</option>
+      <option value="3_kal">a.d. III Kal.</option>
+      <option value="2_kal">prid. Kal.</option>
+      <option value="1_kal" selected>Kal.</option>
+      <option value="6_non">a.d. VI Non.</option>
+      <option value="5_non">a.d. V Non.</option>
+      <option value="4_non">a.d. IV Non.</option>
+      <option value="3_non">a.d. III Non.</option>
+      <option value="2_non">prid. Non.</option>
+      <option value="1_non">Non.</option>
+      <option value="8_id">a.d. VIII Id.</option>
+      <option value="7_id">a.d. VII Id.</option>
+      <option value="6_id">a.d. VI Id.</option>
+      <option value="5_id">a.d. V Id.</option>
+      <option value="4_id">a.d. IV Id.</option>
+      <option value="3_id">a.d. III Id.</option>
+      <option value="2_id">prid. Id.</option>
+      <option value="1_id">Id.</option>
+    </select>
+    <label for="romanMonthSelect">Mensis:</label>
+    <select id="romanMonthSelect">
+      <option value="1">Ian.</option>
+      <option value="2">Feb.</option>
+      <option value="3">Mar.</option>
+      <option value="4">Apr.</option>
+      <option value="5">Mai.</option>
+      <option value="6">Iun.</option>
+      <option value="7">Iul.</option>
+      <option value="8">Aug.</option>
+      <option value="9">Sep.</option>
+      <option value="10">Oct.</option>
+      <option value="11">Nov.</option>
+      <option value="12">Dec.</option>
+    </select>
+    <label for="yearAUCInput">Annus ab Urbe Condita (A.U.C.):</label>
+    <input type="number" id="yearAUCInput" min="1" value="2778">
+    <button id="convertToGregorianBtn">Convertere in Calendarium Gregorianum</button>
+    <p id="resultGregorianConversion" class="result"></p>
+  </div>
+
+  <script>
+    const MES_LATINO = ["IAN.","FEB.","MAR.","APR.","MAI.","IVN.","IVL.","AVG.","SEP.","OCT.","NOV.","DEC."];
+    const DIAS_SEMANA_LATIM = ["DIES SOLIS","DIES LVNAE","DIES MARTIS","DIES MERCVRII","DIES IOVIS","DIES VENERIS","DIES SATVRNI"];
+    const NONAE_IDUS = {1:[5,13],2:[5,13],3:[7,15],4:[5,13],5:[7,15],6:[5,13],7:[7,15],8:[5,13],9:[5,13],10:[7,15],11:[5,13],12:[5,13]};
+
+    function toRoman(num) {
+      const romanos = [["M",1000],["CM",900],["D",500],["CD",400],["C",100],["XC",90],["L",50],["XL",40],["X",10],["IX",9],["V",5],["IV",4],["I",1]];
+      let res = "";
+      for (let [l,v] of romanos) while (num >= v) { res += l; num -= v; }
+      return res;
+    }
+
+    function differenceDays(year) {
+      return Math.floor((year - 1600) / 100) - Math.floor((year - 1600) / 400) + 10;
+    }
+
+    function formatRoman(date) {
+      const ano = date.getUTCFullYear(), mes = date.getUTCMonth() + 1, dia = date.getUTCDate();
+      const auc = ano + 753;
+      const [nonae, idus] = NONAE_IDUS[mes];
+      let txt;
+      if (dia === 1) txt = `KAL. ${MES_LATINO[mes-1]}`;
+      else if (dia === nonae) txt = `NON. ${MES_LATINO[mes-1]}`;
+      else if (dia === idus) txt = `ID. ${MES_LATINO[mes-1]}`;
+      else if (dia < nonae) txt = `A.D. ${toRoman(nonae - dia + 1)} NON. ${MES_LATINO[mes-1]}`;
+      else if (dia < idus) txt = `A.D. ${toRoman(idus - dia + 1)} ID. ${MES_LATINO[mes-1]}`;
+      else {
+        const diasMes = new Date(Date.UTC(ano, mes, 0)).getUTCDate();
+        // cálculo para Kalendas do mês seguinte (contagem inclusiva)
+        const diff = diasMes - dia + 2;
+        const prox = mes % 12;
+        txt = `A.D. ${toRoman(diff)} KAL. ${MES_LATINO[prox]}`;
+      }
+      const dow = DIAS_SEMANA_LATIM[(date.getUTCDay() + 6) % 7];
+      return `${dow} ${txt} ANNO ${toRoman(auc)} AB VRBE CONDITA`;
+    }
+
+    function convertGregorianToRoman() {
+      const inp = document.getElementById('gregDateInput').value;
+      if (!inp) return;
+      const [ys, ms, ds] = inp.split('-');
+      let y = parseInt(ys, 10);
+      const era = document.getElementById('gregEraSelect').value;
+      const yearAstr = era === 'BC' ? -(y - 1) : y;
+      const m = parseInt(ms, 10);
+      const d = parseInt(ds, 10);
+      // Criar data sem usar construtor para anos 0–99
+      let date = new Date(Date.UTC(0, m - 1, d));
+      date.setUTCFullYear(yearAstr, m - 1, d);
+      const diff = differenceDays(yearAstr);
+      date.setUTCDate(date.getUTCDate() - diff);
+      document.getElementById('resultRomanConversion').textContent = formatRoman(date);
+    }
+
+    function convertRomanToGregorian() {
+      const val = document.getElementById('romanSelect').value;
+      const [numStr, type] = val.split('_');
+      const num = parseInt(numStr, 10);
+      const month = parseInt(document.getElementById('romanMonthSelect').value, 10);
+      const auc = parseInt(document.getElementById('yearAUCInput').value, 10);
+      const yearJ = auc - 753;
+      const [nonae, idus] = NONAE_IDUS[month];
+      let dayJ;
+      if (type === 'kal') dayJ = 1 - (num - 1);
+      else if (type === 'non') dayJ = nonae - (num - 1);
+      else if (type === 'id') dayJ = idus - (num - 1);
+      // construir data juliana
+      let date = new Date(Date.UTC(0, month - 1, dayJ));
+      date.setUTCFullYear(yearJ, month - 1, dayJ);
+      // ajustar para gregoriano
+      const diff = differenceDays(yearJ);
+      date.setUTCDate(date.getUTCDate() + diff);
+      // determinar era e ano absoluto
+      let yOut = date.getUTCFullYear();
+      let eraOut = ' d.C.';
+      let absYear;
+      if (yOut <= 0) {
+        eraOut = ' a.C.';
+        absYear = 1 - yOut;
+      } else {
+        absYear = yOut;
+      }
+      const dd = String(date.getUTCDate()).padStart(2, '0');
+      const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const weekdays = ['Dominica Dies', 'Feria Secunda', 'Feria Tertia', 'Feria Quarta', 'Feria Quinta', 'Feria Sexta', 'Sabbatum'];
+      document.getElementById('resultGregorianConversion').textContent = `${dd}/${mm}/${absYear}${eraOut} (${weekdays[date.getUTCDay()]})`;
+    }
+
+    window.onload = () => {
+      const hoje = new Date();
+      const jul = new Date(Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth(), hoje.getUTCDate()));
+      jul.setUTCDate(jul.getUTCDate() - differenceDays(hoje.getUTCFullYear()));
+      document.getElementById('data').textContent = formatRoman(jul);
+      document.getElementById('convertToRomanBtn').onclick = convertGregorianToRoman;
+      document.getElementById('convertToGregorianBtn').onclick = convertRomanToGregorian;
+    };
+  </script>
+</body>
+</html>
+
