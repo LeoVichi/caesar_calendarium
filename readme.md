@@ -19,7 +19,7 @@
 ## 📦 Como usar
 
 1. Clone ou baixe este repositório.
-2. Abra o arquivo `convertor.html` no seu navegador moderno.
+2. Abra o arquivo `convertor.html` no seu navegador.
 3. Use os campos de entrada para converter datas:
 
 ### 👉 Gregoriano → Romano
